@@ -1,4 +1,5 @@
 using TourneyAPI.Models;
+using TourneyAPI.Models.DTOs;
 
 namespace TourneyAPI.Interfaces
 {
@@ -6,8 +7,8 @@ namespace TourneyAPI.Interfaces
     {
         Task<List<Team>> GetTeams();
         Task<Team> GetTeam(int teamId);
-        Task<Team> CreateTeam(Team team);
-        Task<Team> UpdateTeam(int teamId, Team team);
+        Task<Team> CreateTeam(TeamDto teamDto);
+        Task<Team> UpdateTeam(int teamId, TeamDto teamDto);
         Task DeleteTeam(int teamId);
     }
 }

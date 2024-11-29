@@ -2,6 +2,7 @@ using TourneyAPI.Models;
 using TourneyAPI.Data;
 using TourneyAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TourneyAPI.Models.DTOs;
 
 namespace TourneyAPI.Services
 {
@@ -21,19 +22,20 @@ namespace TourneyAPI.Services
             return team;
         }
 
-        public async Task<Team> CreateTeam(Team team)
+        public async Task<Team> CreateTeam(TeamDto teamDto)
         {
+            var team = new Team() { Name = teamDto.TeamName };
             context.Teams.Add(team);
             await context.SaveChangesAsync();
             return team;
         }
 
-        public async Task<Team> UpdateTeam(int teamId, Team team)
+        public async Task<Team> UpdateTeam(int teamId, TeamDto teamDto)
         {
             Team? existingTeam = await context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
             if (existingTeam == null)
                 throw new Exception("Team not found");
-            existingTeam.Name = team.Name;
+            existingTeam.Name = teamDto.TeamName;
             await context.SaveChangesAsync();
             return existingTeam;
         }

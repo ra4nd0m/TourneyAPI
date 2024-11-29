@@ -1,5 +1,7 @@
-using TourneyAPI.Models
+using TourneyAPI.Models;
+using TourneyAPI.Models.DTOs;
 using TourneyAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TourneyAPI.Endpoints
 {
@@ -32,7 +34,7 @@ namespace TourneyAPI.Endpoints
                     return Results.BadRequest(ex.Message);
                 }
             });
-            teamEndpoints.MapPost("/", [Authorize(Policy = "Admin")] async (ITeamService teamService, CreateTeamDto teamDto) =>
+            teamEndpoints.MapPost("/", [Authorize(Policy = "Admin")] async (ITeamService teamService, TeamDto teamDto) =>
             {
                 try
                 {
@@ -44,7 +46,7 @@ namespace TourneyAPI.Endpoints
                     return Results.BadRequest(ex.Message);
                 }
             });
-            teamEndpoints.MapPut("/{id}", [Authorize(Policy = "Admin")] async (ITeamService teamService, int id, UpdateTeamDto teamDto) =>
+            teamEndpoints.MapPut("/{id}", [Authorize(Policy = "Admin")] async (ITeamService teamService, int id, TeamDto teamDto) =>
             {
                 try
                 {
