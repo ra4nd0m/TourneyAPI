@@ -3,6 +3,7 @@ using TourneyAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using TourneyAPI.Extensions;
+using TourneyAPI.Models;
 
 namespace TourneyAPI.Endpoints
 {
@@ -50,8 +51,34 @@ namespace TourneyAPI.Endpoints
                         return Results.Unauthorized();
                     }
 
-                    var result = await tournamentService.CreateTournament(tournamentDto.Name, tournamentDto.Teams, userId);
+                    var result = await tournamentService.CreateTournament(tournamentDto, userId);
                     return Results.Ok(result.ToDto(userId, false));
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            });
+            tournamentEndpoints.MapPut("/{id}", [Authorize(Policy = "TournamentEditor")] async (ITournamentService tournamentService, int id, TournamentStatus status, ClaimsPrincipal user) =>
+            {
+                try
+                {
+                    var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                    bool isAdmin = user.IsInRole("Admin");
+                    var result = await tournamentService.UpdateTournamentStatus(id, status);
+                    return Results.Ok(result.ToDto(userId, isAdmin));
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            });
+            tournamentEndpoints.MapDelete("/{id}", [Authorize(Policy = "TournamentEditor")] async (ITournamentService tournamentService, int id) =>
+            {
+                try
+                {
+                    await tournamentService.DeleteTournament(id);
+                    return Results.Ok();
                 }
                 catch (Exception ex)
                 {

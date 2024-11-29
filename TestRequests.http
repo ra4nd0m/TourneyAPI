@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5186
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBhZG1pbi5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImNjNTNiZDBlLWQ1OGUtNDViMi1hZDgzLTZkOTg2ZTA0NWMzYSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzMyNzM2ODcwLCJpc3MiOiJUb3VybmV5QVBJIiwiYXVkIjoiVG91cm5leUNsaWVudCJ9.USLQ47Ml_NrFwv95soZyrsuq3HJ8SkZlHxXxKNxNqr4
-@refreshToken = f7AunXF723%2BLcQBfHzAHWkH6IpO12Xgg15b3goYcqjil%2F4zbdufQeczhoewtpnDWsk4LtkMpP2nUpWDiwYu17Q%3D%3D
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBhZG1pbi5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI4MzkzYmZkLWUxYTUtNGIwYy1iOWYyLTFiMTdlYmFiYzQ1NyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzMyOTA3MDk2LCJpc3MiOiJUb3VybmV5QVBJIiwiYXVkIjoiVG91cm5leUNsaWVudCJ9.dD1k_Be4JTOJPLw8Jwdws44FSO9OzM96S1cjEW-6LHU
+@refreshToken = NJItygQ5TaeVhArybXDZalUNnigOVV9UhSlxIHoyWAqhPbv2Oa25Tr1hA3tFEi8nGhs4re%2Fe2qivNiFoZz803A%3D%3D
 ### Login as initial admin
 
 POST {{baseUrl}}/api/users/login
@@ -35,7 +35,6 @@ Content-Type: application/json
 }
 
 ### Login as regular user
-# @name userLogin
 POST {{baseUrl}}/api/users/login
 Content-Type: application/json
 
@@ -56,6 +55,8 @@ Authorization: Bearer {{token}}
 
 {
     "name": "Summer Tournament 2024",
+    "startDate": "2024-06-01T00:00:00Z",
+    "endDate": "2024-06-30T23:59:59Z",
     "teams": [
         {
             "name": "Team Alpha"
@@ -83,3 +84,11 @@ Authorization: Bearer {{token}}
 ### Refresh token to get new access token
 POST {{baseUrl}}/api/users/refresh
 Cookie: refreshToken={{refreshToken}}
+
+### Update tournament status (requires admin or tournament creator rights)
+PUT {{baseUrl}}/api/tournaments/4?status=InProgress
+Authorization: Bearer {{token}}
+
+### Delete tournament (requires admin or tournament creator rights)
+DELETE {{baseUrl}}/api/tournaments/1
+Authorization: Bearer {{token}}

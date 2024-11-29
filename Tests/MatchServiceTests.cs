@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TourneyAPI.Data;
 using TourneyAPI.Models;
+using TourneyAPI.Models.DTOs;
 using TourneyAPI.Services;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,7 +42,7 @@ namespace TourneyAPI.Tests
             await _context.Teams.AddRangeAsync(teams);
             await _context.SaveChangesAsync();
 
-            var tournament = await _tournamentService.CreateTournament("Test Tournament", teams,"1");
+            var tournament = await _tournamentService.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams), "1");
             var firstMatch = tournament.Matches.First(m => m.RoundNumber == 1);
             var result = new MatchResult { WinnerId = firstMatch.Team1Id, Team1Score = 1, Team2Score = 0 };
 
@@ -115,7 +116,7 @@ namespace TourneyAPI.Tests
             await _context.Teams.AddRangeAsync(teams);
             await _context.SaveChangesAsync();
 
-            var tournament = await _tournamentService.CreateTournament("Test Tournament", teams,"1");
+            var tournament = await _tournamentService.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams), "1");
 
             var firstMatches = tournament.Matches.Where(m => m.RoundNumber == 1).ToList();
             var finalMatch = tournament.Matches.First(m => m.RoundNumber == 2);

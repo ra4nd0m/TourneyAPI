@@ -1,5 +1,6 @@
 using TourneyAPI.Models;
 using TourneyAPI.Data;
+using TourneyAPI.Models.DTOs;
 using TourneyAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,29 +8,33 @@ namespace TourneyAPI.Services
 {
     public class TournamentService(TournamentContext context) : ITournamentService
     {
-        public async Task<Tournament> CreateTournament(string name, List<Team> teams, string adminId)
+        public async Task<Tournament> CreateTournament(CreateTournamentDto createTournamentDto, string adminId)
         {
-            var teamNames = teams.Select(t => t.Name).ToList();
-            var existingTeams = await context.Teams
-                .Where(t => teamNames.Contains(t.Name))
-                .ToDictionaryAsync(t => t.Name, t => t);
-            var tournamentTeams = teams.Select(newTeam =>
+            List<Team> teams = createTournamentDto.Teams;
+            List<TournamentTeam> tournamentTeams = [];
+            foreach (var newTeam in teams)
             {
-                var team = existingTeams.GetValueOrDefault(newTeam.Name) ?? newTeam;
-                return new TournamentTeam { Team = team };
-            }).ToList();
+                var existingTeam = await context.Teams.FirstOrDefaultAsync(t => t.Name == newTeam.Name);
+                if (existingTeam == null)
+                {
+                    existingTeam = new Team { Name = newTeam.Name };
+                    context.Teams.Add(existingTeam);
+                    await context.SaveChangesAsync();
+                }
+                tournamentTeams.Add(new TournamentTeam { Team = existingTeam });
+            }
 
             Tournament tournament = new Tournament
             {
-                Name = name,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(7),
+                Name = createTournamentDto.Name,
+                StartDate = createTournamentDto.StartDate.ToUniversalTime(),
+                EndDate = createTournamentDto.EndDate.ToUniversalTime(),
                 TournamentStatus = TournamentStatus.Created,
                 AdminId = adminId,
                 Teams = tournamentTeams
             };
             var generator = new SingleEliminationGenerator();
-            tournament.Matches = generator.CreateBracket(teams);
+            tournament.Matches = generator.CreateBracket(tournamentTeams.Select(tt => tt.Team!).ToList());
             context.Tournaments.Add(tournament);
             await context.SaveChangesAsync();
             return tournament;
@@ -78,6 +83,17 @@ namespace TourneyAPI.Services
             }
             await context.SaveChangesAsync();
             return tournament;
+        }
+
+        public async Task DeleteTournament(int tournamentId)
+        {
+            var tournament = await context.Tournaments
+                .Include(t => t.Matches)
+                .Include(t => t.Teams)
+                .FirstOrDefaultAsync(t => t.Id == tournamentId) ?? throw new Exception("Tournament not found");
+            context.Matches.RemoveRange(tournament.Matches);
+            context.Tournaments.Remove(tournament);
+            await context.SaveChangesAsync();
         }
     }
 }

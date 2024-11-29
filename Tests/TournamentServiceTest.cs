@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TourneyAPI.Data;
 using TourneyAPI.Models;
+using TourneyAPI.Models.DTOs;
 using TourneyAPI.Services;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,7 +42,7 @@ namespace TourneyAPI.Tests
             await _context.SaveChangesAsync();
             // Act
             Tournament createdTournament;
-            createdTournament = await _service.CreateTournament("Test Tournament", teams,"1");
+            createdTournament = await _service.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams), "1");
 
 
             // Assert
@@ -125,8 +126,8 @@ namespace TourneyAPI.Tests
             await _context.Teams.AddRangeAsync(teams2);
             await _context.SaveChangesAsync();
 
-            await _service.CreateTournament("Tournament 1", teams1,"1");
-            await _service.CreateTournament("Tournament 2", teams2,"1");
+            await _service.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams1), "1");
+            await _service.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams2), "1");
 
             // Act
             var tournaments = await _service.GetTournaments();
@@ -181,7 +182,7 @@ namespace TourneyAPI.Tests
             await _context.Teams.AddRangeAsync(teams);
             await _context.SaveChangesAsync();
 
-            var createdTournament = await _service.CreateTournament("Test Tournament", teams,"1");
+            var createdTournament = await _service.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams), "1");
 
             // Act
             var tournament = await _service.GetTournament(createdTournament.Id);
@@ -229,7 +230,7 @@ namespace TourneyAPI.Tests
             await _context.Teams.AddRangeAsync(teams);
             await _context.SaveChangesAsync();
 
-            var createdTournament = await _service.CreateTournament("Test Tournament", teams,"1");
+            var createdTournament = await _service.CreateTournament(new CreateTournamentDto(Name: "Test Tournament", StartDate: DateTime.Parse("2023-01-01"), EndDate: DateTime.Parse("2023-01-02"), Teams: teams), "1");
 
             // Act
             var tournament = await _service.GetTournament(createdTournament.Id);
