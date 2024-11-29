@@ -34,7 +34,7 @@ namespace TourneyAPI.Endpoints
                     return Results.BadRequest(ex.Message);
                 }
             });
-            teamEndpoints.MapPost("/", [Authorize(Policy = "Admin")] async (ITeamService teamService, TeamDto teamDto) =>
+            teamEndpoints.MapPost("/", [Authorize(Policy = "AdminOrUser")] async (ITeamService teamService, TeamDto teamDto) =>
             {
                 try
                 {
@@ -46,7 +46,7 @@ namespace TourneyAPI.Endpoints
                     return Results.BadRequest(ex.Message);
                 }
             });
-            teamEndpoints.MapPut("/{id}", [Authorize(Policy = "Admin")] async (ITeamService teamService, int id, TeamDto teamDto) =>
+            teamEndpoints.MapPut("/{id}", [Authorize(Policy = "AdminOrUser")] async (ITeamService teamService, int id, TeamDto teamDto) =>
             {
                 try
                 {
