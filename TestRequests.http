@@ -1,0 +1,85 @@
+@baseUrl = http://localhost:5186
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBhZG1pbi5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImNjNTNiZDBlLWQ1OGUtNDViMi1hZDgzLTZkOTg2ZTA0NWMzYSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzMyNzM2ODcwLCJpc3MiOiJUb3VybmV5QVBJIiwiYXVkIjoiVG91cm5leUNsaWVudCJ9.USLQ47Ml_NrFwv95soZyrsuq3HJ8SkZlHxXxKNxNqr4
+@refreshToken = f7AunXF723%2BLcQBfHzAHWkH6IpO12Xgg15b3goYcqjil%2F4zbdufQeczhoewtpnDWsk4LtkMpP2nUpWDiwYu17Q%3D%3D
+### Login as initial admin
+
+POST {{baseUrl}}/api/users/login
+Content-Type: application/json
+
+{
+    "email": "admin@admin.com",
+    "password": "Admin123!"
+}
+
+### Register new admin (requires admin token)
+POST {{baseUrl}}/api/users/register-admin
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "userName": "newadmin@example.com",
+    "email": "newadmin@example.com",
+    "password": "NewAdmin123!",
+    "confirmPassword": "NewAdmin123!"
+}
+
+### Register regular user
+POST {{baseUrl}}/api/users/register
+Content-Type: application/json
+
+{
+    "userName": "user@example.com",
+    "email": "user@example.com",
+    "password": "User123!",
+    "confirmPassword": "User123!"
+}
+
+### Login as regular user
+# @name userLogin
+POST {{baseUrl}}/api/users/login
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "password": "User123!"
+}
+
+### Get all tournaments (public)
+GET {{baseUrl}}/api/tournaments
+
+### Get specific tournament (public)
+GET {{baseUrl}}/api/tournaments/1
+### Create tournament (authenticated user)
+POST {{baseUrl}}/api/tournaments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Summer Tournament 2024",
+    "teams": [
+        {
+            "name": "Team Alpha"
+        },
+        {
+            "name": "Team Beta"
+        },
+        {
+            "name": "Team Gamma"
+        },
+        {
+            "name": "Team Delta"
+        }
+    ]
+}
+
+### Get all tournaments (authenticated)
+GET {{baseUrl}}/api/tournaments
+Authorization: Bearer {{token}}
+
+### Get specific tournament (authenticated)
+GET {{baseUrl}}/api/tournaments/1
+Authorization: Bearer {{token}}
+
+### Refresh token to get new access token
+POST {{baseUrl}}/api/users/refresh
+Cookie: refreshToken={{refreshToken}}
